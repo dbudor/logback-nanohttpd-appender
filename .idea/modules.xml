@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/logback-nanohttpd-appender.iml" filepath="$PROJECT_DIR$/.idea/modules/logback-nanohttpd-appender.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/logback-nanohttpd-appender_main.iml" filepath="$PROJECT_DIR$/.idea/modules/logback-nanohttpd-appender_main.iml" group="logback-nanohttpd-appender" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/logback-nanohttpd-appender_test.iml" filepath="$PROJECT_DIR$/.idea/modules/logback-nanohttpd-appender_test.iml" group="logback-nanohttpd-appender" />
+    </modules>
+  </component>
+</project>

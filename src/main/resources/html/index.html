@@ -1,0 +1,54 @@
+<!doctype>
+<html>
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script language="JavaScript">
+
+      var tbody = null;
+      var socket = null;
+
+      function keepalive() {
+        if (!socket) {
+          return;
+        }
+        socket.send('NOP');
+        setTimeout(function() {
+          keepalive();
+        }, 30000);
+      }
+
+      $(document).ready(function() {
+        if (!window.WebSocket) {
+          alert('WebSocket not supported by this browser');
+          return;
+        }
+        var loc = window.location;
+        var uri = loc.protocol === 'https:' ? 'wss:' : 'ws:';
+        console.log(loc);
+        uri += '//' + loc.host + loc.pathname;
+        socket = new WebSocket(uri);
+        socket.addEventListener('open', function() {
+          keepalive();
+        });
+        socket.addEventListener('close', function() {
+          socket = null;
+        });
+        socket.addEventListener('message', function(event) {
+          var data = event.data;
+          if (tbody) {
+            tbody.append(data);
+          } else if (data.match(/^<!DOCTYPE/)) {
+            var head = data.replace(/[^]*<head>([^]*)<\/head>[^]*/, "$1");
+            var body = data.replace(/[^]*<body>([^]*)<\/body>[^]*/, "$1");
+            $('head').append(head);
+            $('body').html(body);
+            tbody = $('body > table > tbody');
+          }
+        });
+
+      });
+    </script>
+</head>
+<body>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!doctype>
+<html>
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script language="JavaScript">
+
+      var socket = null;
+
+      function keepalive() {
+        if (!socket) {
+          return;
+        }
+        socket.send('NOP');
+        setTimeout(function() {
+          keepalive();
+        }, 30000);
+      }
+
+      function prettyPrintJsonConsole(json) {
+        if (typeof json != 'string') {
+          json = JSON.stringify(json, undefined, '\t');
+        }
+
+        var
+          arr = [],
+          _string = 'color:green',
+          _number = 'color:darkorange',
+          _boolean = 'color:blue',
+          _null = 'color:magenta',
+          _key = 'color:red';
+
+        json = json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+          var style = _number;
+          if (/^"/.test(match)) {
+            if (/:$/.test(match)) {
+              style = _key;
+            } else {
+              style = _string;
+            }
+          } else if (/true|false/.test(match)) {
+            style = _boolean;
+          } else if (/null/.test(match)) {
+            style = _null;
+          }
+          arr.push(style);
+          arr.push('');
+          return '%c' + match + '%c';
+        });
+
+        arr.unshift(json);
+
+        console.log.apply(console, arr);
+      }
+
+      $(document).ready(function() {
+        if (!window.WebSocket) {
+          alert('WebSocket not supported by this browser');
+          return;
+        }
+        var loc = window.location;
+        var uri = loc.protocol === 'https:' ? 'wss:' : 'ws:';
+        uri += '//' + loc.host + loc.pathname;
+        socket = new WebSocket(uri);
+        socket.addEventListener('open', function() {
+          keepalive();
+        });
+        socket.addEventListener('close', function() {
+          socket = null;
+        });
+        socket.addEventListener('message', function(event) {
+          var data = event.data;
+          prettyPrintJsonConsole(data);
+          // console.log(JSON.parse(data));
+        });
+      });
+    </script>
+</head>
+<body>
+Stuff happening at console.log()
+</body>
+</html>
